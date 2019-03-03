@@ -17,3 +17,11 @@ $container['logger'] = function ($c) {
     $logger->pushHandler(new Monolog\Handler\StreamHandler($settings['path'], $settings['level']));
     return $logger;
 };
+
+// Configurações da integração Slim+Swagger-PHP e do Swagger-PHP
+// $app é a variavel que contem a instancia da aplicação
+$container[\JunioDeAlmeida\Slim\SlimSwaggerRouteJav::class] = function ($c) use ($app) {
+    return new \JunioDeAlmeida\Slim\SlimSwaggerRouteJav($app);
+};
+// Seteando as rotas /docs/view e /docs/json
+$container[\JunioDeAlmeida\Slim\SlimSwaggerRouteJav::class]->setRouters();
