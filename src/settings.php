@@ -34,26 +34,21 @@ return [
             //  ],
         ],
 
-        'doctrine' => [
-            // if true, metadata caching is forcefully disabled
-            'dev_mode' => true,
+        'uploads' => [
+            'talk' => __DIR__ . '/../uploads/talk',
+            'person' => __DIR__ . '/../uploads/person',
+            'community' => __DIR__ . '/../uploads/community',
+        ],
 
-            // path where the compiled metadata info will be cached
-            // make sure the path exists and it is writable
-            'cache_dir' => APP_ROOT . '/var/doctrine',
-
-            // you should add any other path containing annotated entity classes
-            'metadata_dirs' => [APP_ROOT . '/src/Domain'],
-
-            'connection' => [
-                'driver' => 'pdo_mysql',
-                'host' => 'localhost',
-                'port' => 3306,
-                'dbname' => 'mydb',
-                'user' => 'user',
-                'password' => 'secret',
-                'charset' => 'utf-8'
-            ]
-        ]
+        'db' => [
+            'driver' => 'mysql',
+            'host' => 'localhost',
+            'database' => 'netinhoi_flisoldf_api',
+            'username' => 'root',
+            'password' => 'root',
+            'charset'   => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix'    => '',
+        ],
     ],
 ];

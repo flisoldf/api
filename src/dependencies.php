@@ -25,3 +25,17 @@ $container[\JunioDeAlmeida\Slim\SlimSwaggerRouteJav::class] = function ($c) use 
 };
 // Seteando as rotas /docs/view e /docs/json
 $container[\JunioDeAlmeida\Slim\SlimSwaggerRouteJav::class]->setRouters();
+
+$container['db'] = function ($container) {
+    $capsule = new \Illuminate\Database\Capsule\Manager;
+    $capsule->addConnection($container['settings']['db']);
+
+    $capsule->setAsGlobal();
+    $capsule->bootEloquent();
+
+    return $capsule;
+};
+
+$container[Controllers\TalkPostController::class] = function ($c)  {
+    return new \Controllers\TalkPostController($c);
+};
