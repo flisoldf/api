@@ -1,6 +1,8 @@
 <?php
 // DIC configuration
 
+//use Controllers\TalkPostController;
+
 $container = $app->getContainer();
 
 // view renderer
@@ -37,5 +39,5 @@ $container['db'] = function ($container) {
 };
 
 $container[Controllers\TalkPostController::class] = function ($c)  {
-    return new \Controllers\TalkPostController($c);
+    return new Controllers\TalkPostController($c);
 };
