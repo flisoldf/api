@@ -82,6 +82,15 @@ class TalkPostController extends BaseController
             return $response->withJson([
                 'message' => 'O campo Foto é obrigatório.'
             ], 400);
+        } else {
+            // Verify is file is sent
+            try {
+                $this->fileIsSent($uploadedFiles['pl-foto']);
+            } catch (\Exception $e) {
+                return $response->withJson([
+                    'message' => 'O campo Foto é obrigatório.'
+                ], 400);
+            }
         }
 
         if ((!array_key_exists('pl-minicurriculo', $body)) || (empty($body['pl-minicurriculo']))) {
@@ -165,12 +174,16 @@ class TalkPostController extends BaseController
         try {
             // Move slide to right place
             if (array_key_exists('pl-slide', $uploadedFiles)) {
-                $talkFileDir = $talkDir . '/' . $talk->id;
-                if (!file_exists($talkFileDir)) {
-                    mkdir($talkFileDir, 0755, true);
+
+                // Verify is file is sent
+                if ($this->fileIsSent($uploadedFiles['pl-slide'])) {
+                    $talkFileDir = $talkDir . '/' . $talk->id;
+                    if (!file_exists($talkFileDir)) {
+                        mkdir($talkFileDir, 0755, true);
+                    }
+                    $talk->slide_file = $this->moveUploadedFile($talkFileDir, $uploadedFiles['pl-slide']);
+                    $talk->save();
                 }
-                $talk->slide_file = $this->moveUploadedFile($talkFileDir, $uploadedFiles['pl-slide']);
-                $talk->save();
             }
         } catch (\Exception $e) {
             // do nothing.
