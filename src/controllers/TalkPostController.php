@@ -143,27 +143,37 @@ class TalkPostController extends BaseController
         $person->save();
         $speakerTalk->speaker_id = $person->id;
 
-        // Move photo to right place
-        $personFileDir = $personDir . '/' . $person->id;
-        if (!file_exists($personFileDir)) {
-            mkdir($personFileDir, 0755, true);
+        try {
+            // Move photo to right place
+            $personFileDir = $personDir . '/' . $person->id;
+            if (!file_exists($personFileDir)) {
+                mkdir($personFileDir, 0755, true);
+            }
+            $person->photo = $this->moveUploadedFile($personFileDir, $uploadedFiles['pl-foto']);
+            $person->save();
+        } catch (\Exception $e) {
+            return $response->withJson([
+                'message' => 'O campo Foto é obrigatório.'
+            ], 400);
         }
-        $person->photo = $this->moveUploadedFile($personFileDir, $uploadedFiles['pl-foto']);
-        $person->save();
 
         // TODO: Turn it dynamic from table
         $talk->edition_id = 15;
         $talk->save();
         $speakerTalk->talk_id = $talk->id;
 
-        // Move slide to right place
-        if (array_key_exists('pl-slide', $uploadedFiles)) {
-            $talkFileDir = $talkDir . '/' . $talk->id;
-            if (!file_exists($talkFileDir)) {
-                mkdir($talkFileDir, 0755, true);
+        try {
+            // Move slide to right place
+            if (array_key_exists('pl-slide', $uploadedFiles)) {
+                $talkFileDir = $talkDir . '/' . $talk->id;
+                if (!file_exists($talkFileDir)) {
+                    mkdir($talkFileDir, 0755, true);
+                }
+                $talk->slide_file = $this->moveUploadedFile($talkFileDir, $uploadedFiles['pl-slide']);
+                $talk->save();
             }
-            $talk->slide_file = $this->moveUploadedFile($talkFileDir, $uploadedFiles['pl-slide']);
-            $talk->save();
+        } catch (\Exception $e) {
+            // do nothing.
         }
 
         $speakerTalk->save();
