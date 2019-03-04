@@ -13,7 +13,7 @@ return [
         // Monolog settings
         'logger' => [
             'name' => 'slim-app',
-            'path' => isset($_ENV['docker']) ? 'php://stdout' : __DIR__ . '/../logs/app.log',
+            'path' => isset($_ENV['docker']) ? 'php://stdout' : __DIR__ . '/../../api-data/logs/app.log',
             'level' => \Monolog\Logger::DEBUG,
         ],
 
@@ -35,9 +35,9 @@ return [
         ],
 
         'uploads' => [
-            'talk' => __DIR__ . '/../uploads/talk',
-            'person' => __DIR__ . '/../uploads/person',
-            'community' => __DIR__ . '/../uploads/community',
+            'talk' => __DIR__ . '/../../api-data/uploads/talk',
+            'person' => __DIR__ . '/../../api-data/uploads/person',
+            'community' => __DIR__ . '/../../api-data/uploads/community',
         ],
 
         'db' => [
