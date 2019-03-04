@@ -17,8 +17,9 @@ class BaseController {
      * to avoid overwriting an existing uploaded file.
      *
      * @param string $directory directory to which the file is moved
-     * @param UploadedFile $uploaded file uploaded file to move
-     * @return string filename of moved file
+     * @param UploadedFile $uploadedFile
+     * @return string Filename of moved file.
+     * @throws \Exception
      */
     protected function moveUploadedFile($directory, UploadedFile $uploadedFile)
     {
