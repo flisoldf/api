@@ -10,7 +10,7 @@ namespace Controllers;
 
 use Slim\Http\UploadedFile;
 
-class BaseController
+class UploaderController
 {
 
     /**

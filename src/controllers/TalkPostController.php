@@ -15,7 +15,7 @@ use Models\Talk;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class TalkPostController extends BaseController
+class TalkPostController extends UploaderController
 {
 
     /**
