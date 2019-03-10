@@ -8,6 +8,8 @@
 
 namespace Controllers;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\RequestOptions;
 
 class BotController
 {
@@ -20,15 +22,33 @@ class BotController
         return $this->sendMessage('Comando desconhecido. Tente /help para ver a lista de comandos.');
     }
 
+    /**
+     * @param $message
+     * @return bool
+     * @throws \Exception
+     */
     protected function sendMessage($message)
     {
-        $text = trim($message);
+        $client = new Client();
 
-        if (strlen(trim($text)) > 0) {
-            $send = $this->apiUrl . '/sendmessage?parse_mode=html&chat_id=' . $this->chatId . '&text=' . urlencode($text);
-            file_get_contents($send);
+        if (is_string($message)) {
+            $text = trim($message);
 
-            return true;
+            if (strlen(trim($text)) > 0) {
+                $response = $client->post($this->apiUrl . '/sendmessage', [
+                    RequestOptions::JSON => [
+                        'chat_id' => $this->chatId,
+                        'parse_mode' => 'html',
+                        'text' => $text,
+                    ],
+                ]);
+
+//                if ($response->getStatusCode() !== 200) {
+//                    throw new \Exception($response->getBody()->getContents());
+//                }
+
+                return true;
+            }
         }
 
         return false;
