@@ -57,4 +57,6 @@ return [
             'token' => '<bot>:<token>',
         ],
     ],
+
+    'edition' => 15,
 ];
