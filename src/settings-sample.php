@@ -51,4 +51,10 @@ return [
             'prefix'    => '',
         ],
     ],
+
+    'telegram' => [
+        'FlisolDFAdministracaoBot' => [
+            'token' => '<bot>:<token>',
+        ],
+    ],
 ];

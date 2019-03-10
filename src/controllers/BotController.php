@@ -17,10 +17,10 @@ class BotController
 
     protected function unknown()
     {
-        return $this->send('Comando desconhecido. Tente /ajuda para ver a lista de comandos.');
+        return $this->sendMessage('Comando desconhecido. Tente /help para ver a lista de comandos.');
     }
 
-    protected function send($message)
+    protected function sendMessage($message)
     {
         $text = trim($message);
 

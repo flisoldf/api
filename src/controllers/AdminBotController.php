@@ -6,9 +6,6 @@
  * Time: 01:00
  */
 
-// https://api.telegram.org/bot702761714:AAGrGPCNEtA6tPjsoVldtpzdL6ipXE410yE/setwebhook?url=
-// https://api.telegram.org/bot702761714:AAGrGPCNEtA6tPjsoVldtpzdL6ipXE410yE/setwebhook?url=https://api.flisoldf.blog.br/adminbot
-
 namespace Controllers;
 
 use Interop\Container\ContainerInterface;
@@ -34,20 +31,17 @@ class AdminBotController extends BotController
 
     public function __invoke(Request $request, Response $response, $args = [])
     {
-//        $body = $request->getParsedBody();
-        $content = file_get_contents('php://input');
-        $update = json_decode($content, true);
+        $body = $request->getParsedBody();
         $this->init(
-            $this->container->get('settings')['telegram']['botToken'],
-            $update['message']['chat']['id']
+            $this->container->get('settings')['telegram']['FlisolDFAdministracaoBot']['token'],
+            $body['message']['chat']['id']
         );
-        $message = $update['message']['text'];
+        $message = $body['message']['text'];
 
         // Available bot commands
         $commands = [
             // General Commands
             'help',
-            'ajuda',
 
             // Server Commands
             'server',
@@ -121,12 +115,7 @@ class AdminBotController extends BotController
         $message .= "<b>/help server</b>" . chr(10) . "  - List the server related commands" . chr(10) . chr(10);
         $message .= "<b>/talks total</b>" . chr(10) . "  - Lista o total de palestras";
 
-        return $this->send($message);
-    }
-
-    // Alias to Help
-    public function ajuda() {
-        $this->help();
+        return $this->sendMessage($message);
     }
 
     public function talks($args)
@@ -142,7 +131,7 @@ class AdminBotController extends BotController
 
             $message = 'Total de Palestras: <strong>' . count($talks) . '</strong>';
 
-            return $this->send($message);
+            return $this->sendMessage($message);
         }
     }
 
@@ -154,17 +143,17 @@ class AdminBotController extends BotController
         $message .= "<b>/server who</b>" . chr(10) . "  - Retrieves the current sessions on the server (alias /who)" . chr(10) . chr(10);
         $message .= "<b>/server disk</b>" . chr(10) . " - Retrieves the disk information like space used/available (alias /disk)";
 
-        return $this->send($message);
+        return $this->sendMessage($message);
     }
 
     public function uptime()
     {
-        return $this->send("Server uptime:" . exec('uptime'));
+        return $this->sendMessage("Server uptime:" . exec('uptime'));
     }
 
     public function uname()
     {
-        return $this->send(exec('uname -a'));
+        return $this->sendMessage(exec('uname -a'));
     }
 
     public function who()
@@ -172,6 +161,7 @@ class AdminBotController extends BotController
         exec('who', $serverwho);
 
         $output = "No active sessions on server at the moment.";
+        $i = 0;
 
         if (count($serverwho) > 0) {
             $output = "Current sessions on server:" . chr(10);
@@ -180,7 +170,7 @@ class AdminBotController extends BotController
             }
         }
 
-        return $this->send($output);
+        return $this->sendMessage($output);
     }
 
     public function disk()
@@ -188,9 +178,9 @@ class AdminBotController extends BotController
         exec('df -hT /home', $serverspace);
         if (count($serverspace) > 0) {
             $parsed = array_values(array_filter(explode(" ", $serverspace[1])));
-            return $this->send("<b>Filesystem</b>: " . $parsed[1] . chr(10) . "<b>Size</b>: " . $parsed[2] . chr(10) . "<b>Used</b>: " . $parsed[3] . " (" . $parsed[5] . ")" . chr(10) . "<b>Available</b>: " . $parsed[4]);
+            return $this->sendMessage("<b>Filesystem</b>: " . $parsed[1] . chr(10) . "<b>Size</b>: " . $parsed[2] . chr(10) . "<b>Used</b>: " . $parsed[3] . " (" . $parsed[5] . ")" . chr(10) . "<b>Available</b>: " . $parsed[4]);
         } else {
-            return $this->send("Error executing the requested command.");
+            return $this->sendMessage("Error executing the requested command.");
         }
     }
 
