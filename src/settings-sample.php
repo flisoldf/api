@@ -46,9 +46,9 @@ return [
             'database' => 'netinhoi_flisoldf_api',
             'username' => 'root',
             'password' => 'root',
-            'charset'   => 'utf8',
+            'charset' => 'utf8',
             'collation' => 'utf8_unicode_ci',
-            'prefix'    => '',
+            'prefix' => '',
         ],
     ],
 
