@@ -5,3 +5,4 @@
 .DS_Store
 /uploads
 /src/settings.php
+*.bak

@@ -1,7 +1,8 @@
 <?php
 
-use Controllers\TalkPostController;
 use Controllers\AdminBotController;
+use Controllers\CollaboratorsPostController;
+use Controllers\TalksPostController;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -15,15 +16,9 @@ $app->get('/[{name}]', function (Request $request, Response $response, array $ar
     return $this->renderer->render($response, 'index.phtml', $args);
 });
 
-$app->post('/talk', TalkPostController::class);
+$app->post('/talks', TalksPostController::class);
 
-$app->post('/collaborator', function (Request $request, Response $response, array $args) {
-    // Sample log message
-    $this->logger->info("Slim-Skeleton '/' route");
-
-    // Render index view
-    return $this->renderer->render($response, 'index.phtml', $args);
-});
+$app->post('/collaborators', CollaboratorsPostController::class);
 
 $app->post('/community', function (Request $request, Response $response, array $args) {
     // Sample log message

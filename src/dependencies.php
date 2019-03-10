@@ -38,6 +38,10 @@ $container['db'] = function ($container) {
     return $capsule;
 };
 
-$container[Controllers\TalkPostController::class] = function ($c)  {
-    return new Controllers\TalkPostController($c);
+$container[Controllers\TalksPostController::class] = function ($c)  {
+    return new Controllers\TalksPostController($c);
+};
+
+$container[Controllers\CollaboratorsPostController::class] = function ($c)  {
+    return new Controllers\CollaboratorsPostController($c);
 };
