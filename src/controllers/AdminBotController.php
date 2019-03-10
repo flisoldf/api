@@ -111,9 +111,10 @@ class AdminBotController extends BotController
 
     public function help()
     {
-        $message = "<b>Ajuda Geral</b>" . chr(10) . chr(10);
-        $message .= "<b>/help server</b>" . chr(10) . "  - List the server related commands" . chr(10) . chr(10);
-        $message .= "<b>/talks total</b>" . chr(10) . "  - Lista o total de palestras";
+        $message = '<strong>Ajuda Geral</strong>' . chr(10) . chr(10);
+        $message .= '<strong>/help server</strong>' . chr(10) . '  - List the server related commands' . chr(10) . chr(10);
+        $message .= '<strong>/talks</strong>' . chr(10) . '  - Lista as palestras' . chr(10) . chr(10);
+        $message .= '<strong>/talks total</strong>' . chr(10) . '  - Exibe o total de palestras';
 
         return $this->sendMessage($message);
     }
@@ -123,16 +124,30 @@ class AdminBotController extends BotController
         // Create connection. Necessary to stablish a connection.
         $db = $this->container->get('db');
 
-        if ($args[0] === 'total') {
-            $talks = Talk::where('edition_id', 15)
-//            ->orderBy('name', 'desc')
-//            ->take(10)
-                ->get();
+        if (array_key_exists(0, $args)) {
+            if ($args[0] === 'total') {
+                $talks = Talk::where('edition_id', 15)
+                    ->get();
 
-            $message = 'Total de Palestras: <strong>' . count($talks) . '</strong>';
+                $message = 'Total de Palestras: <strong>' . count($talks) . '</strong>';
 
-            return $this->sendMessage($message);
+                return $this->sendMessage($message);
+            }
         }
+
+        // Else
+        $talks = Talk::join('speaker_talk', 'speaker_talk.talk_id', '=', 'talk.id')
+            ->join('person', 'person.id', '=', 'speaker_talk.speaker_id')
+            ->where('talk.edition_id', 15)
+            ->get();
+
+        $message = '<strong>Listagem das Palestras</strong>' . chr(10) . chr(10);
+
+        foreach ($talks as $talk) {
+            $message .= '<strong>' . $talk->id . '. ' . $talk->title . '</strong> - <em>' . $talk->name . '</em>' . chr(10);
+        }
+
+        return $this->sendMessage($message);
     }
 
     public function server()
