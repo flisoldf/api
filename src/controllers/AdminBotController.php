@@ -40,6 +40,9 @@ class AdminBotController extends BotController
 
         // Available bot commands
         $commands = [
+            // Start of bot
+            'start',
+
             // General Commands
             'help',
 
@@ -107,6 +110,14 @@ class AdminBotController extends BotController
         } else {
             $this->unknown();
         }
+    }
+
+    public function start()
+    {
+        $message = 'Seja bem vindo ao robô da administração do FlisolDF!';
+        $this->sendMessage($message);
+
+        $this->help();
     }
 
     public function help()
