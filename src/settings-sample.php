@@ -50,13 +50,25 @@ return [
             'collation' => 'utf8_unicode_ci',
             'prefix' => '',
         ],
-    ],
 
-    'telegram' => [
-        'FlisolDFAdministracaoBot' => [
-            'token' => '<bot>:<token>',
+        'telegram' => [
+            'FlisolDFAdministracaoBot' => [
+                'token' => '<bot>:<token>',
+            ],
         ],
+
+        'doity' => [
+            'authentication' => [
+                'username' => '<username>',
+                'password' => '<password>',
+            ],
+            'url' => [
+                'login' => 'https://doity.com.br/admin/users/login',
+                'event' => 'https://doity.com.br/admin/eventos/painel/<event id>',
+            ],
+        ],
+
+        'edition' => 15,
     ],
 
-    'edition' => 15,
 ];

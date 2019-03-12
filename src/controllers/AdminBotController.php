@@ -62,6 +62,8 @@ class AdminBotController extends BotController
             'disk',
 
             'talks',
+
+            'participants',
         ];
 
         $arguments = [
@@ -77,7 +79,10 @@ class AdminBotController extends BotController
             ],
             'talks' => [
 //                'total',
-            ]
+            ],
+            'participants' => [
+//                'total',
+            ],
         ];
 
         // Aliases for commands
@@ -125,7 +130,8 @@ class AdminBotController extends BotController
         $message = '<strong>Ajuda Geral</strong>' . chr(10) . chr(10);
         $message .= '<strong>/help server</strong>' . chr(10) . '  - List the server related commands' . chr(10) . chr(10);
         $message .= '<strong>/talks</strong>' . chr(10) . '  - Lista as palestras' . chr(10) . chr(10);
-        $message .= '<strong>/talks total</strong>' . chr(10) . '  - Exibe o total de palestras';
+        $message .= '<strong>/talks total</strong>' . chr(10) . '  - Exibe o total de palestras' . chr(10) . chr(10);
+        $message .= '<strong>/participants total</strong>' . chr(10) . '  - Exibe o total de participantes (confirmados)';
 
         return $this->sendMessage($message);
     }
@@ -140,7 +146,7 @@ class AdminBotController extends BotController
                 $talks = Talk::where('edition_id', 15)
                     ->get();
 
-                $message = 'Total de Palestras: <strong>' . count($talks) . '</strong>';
+                $message = 'Total de palestras: <strong>' . count($talks) . '</strong>';
 
                 return $this->sendMessage($message);
             }
@@ -152,13 +158,154 @@ class AdminBotController extends BotController
             ->where('talk.edition_id', 15)
             ->get();
 
-        $message = '<strong>Listagem das Palestras</strong>' . chr(10) . chr(10);
+        $message = '<strong>Listagem das palestras</strong>' . chr(10) . chr(10);
 
         foreach ($talks as $talk) {
             $message .= '<strong>' . $talk->id . '. ' . $talk->title . '</strong> - <em>' . $talk->name . '</em>' . chr(10);
         }
 
         return $this->sendMessage($message);
+    }
+
+    public function participants($args)
+    {
+        // Create connection. Necessary to stablish a connection.
+        $db = $this->container->get('db');
+
+        if (array_key_exists(0, $args)) {
+            if ($args[0] === 'total') {
+//                $talks = Talk::where('edition_id', 15)
+//                    ->get();
+//
+//                $message = 'Total de palestras: <strong>' . count($talks) . '</strong>';
+//
+//                return $this->sendMessage($message);
+
+                $confirmed = 0;
+
+                // Set a user agent. This basically tells the server that we are using Chrome ;)
+                define('USER_AGENT', 'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.2309.372 Safari/537.36');
+
+                // Where our cookie information will be stored (needed for authentication).
+                define('COOKIE_FILE', './../tmp/cookie' . microtime() . '.txt');
+
+                // An associative array that represents the required form fields.
+                // You will need to change the keys / index names to match the name of the form
+                // fields.
+                $postValues = [
+                    '_method' => 'POST',
+                    'data[_Token][key]' => 'dea5c779a15db160c946a418fbbbf8db027525a2655405f497cfe7d7e767e97dc6e298a9b0431337443f5fbc9020d93ba58b44be5d2b01f92771ccb4895775e8',
+                    'data[User][username]' => $this->container->get('settings')['doity']['authentication']['username'],
+                    'data[User][password]' => $this->container->get('settings')['doity']['authentication']['password'],
+                    'data[_Token][fields]' => '614b91fd9881870a3f1a968120fbf154615ed13b%3A',
+                    'data[_Token][unlocked]' => ''
+                ];
+
+                // Initiate cURL.
+                $curl = curl_init();
+
+                // Set the URL that we want to send our POST request to. In this
+                // case, it's the action URL of the login form.
+                curl_setopt($curl, CURLOPT_URL, $this->container->get('settings')['doity']['url']['login']);
+
+                // Tell cURL that we want to carry out a POST request.
+                curl_setopt($curl, CURLOPT_POST, true);
+
+                // Set our post fields / date (from the array above).
+                curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($postValues));
+
+                // We don't want any HTTPS errors.
+                curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+                curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+
+                // Where our cookie details are saved. This is typically required
+                // for authentication, as the session ID is usually saved in the cookie file.
+                curl_setopt($curl, CURLOPT_COOKIEJAR, COOKIE_FILE);
+
+                // Sets the user agent. Some websites will attempt to block bot user agents.
+                // Hence the reason I gave it a Chrome user agent.
+                curl_setopt($curl, CURLOPT_USERAGENT, USER_AGENT);
+
+                // Tells cURL to return the output once the request has been executed.
+                curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+                // Allows us to set the referer header. In this particular case, we are
+                // fooling the server into thinking that we were referred by the login form.
+                curl_setopt($curl, CURLOPT_REFERER, $this->container->get('settings')['doity']['url']['event']);
+
+                // Do we want to follow any redirects?
+                curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);
+
+                // Execute the login request.
+                echo curl_exec($curl);
+
+                // Check for errors!
+                if (curl_errno($curl)) {
+                    throw new Exception(curl_error($curl));
+                }
+
+                // We should be logged in by now. Let's attempt to access a password protected page
+                curl_setopt($curl, CURLOPT_URL, $this->container->get('settings')['doity']['url']['event']);
+
+                // Use the same cookie file.
+                curl_setopt($curl, CURLOPT_COOKIEJAR, COOKIE_FILE);
+
+                // Use the same user agent, just in case it is used by the server for session validation.
+                curl_setopt($curl, CURLOPT_USERAGENT, USER_AGENT);
+
+                // We don't want any HTTPS / SSL errors.
+                curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+                curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+
+                // Execute the GET request and print out the result.
+                $html = curl_exec($curl);
+
+                $doc = new \DOMDocument();
+                $doc->loadHTML($html);
+
+                $xpath = new \DOMXpath($doc);
+                $nodelist = $xpath->query('//div[@class="basicas"]');
+
+                if (!is_null($nodelist)) {
+                    if ($nodelist->count() > 0) {
+                        $node = $nodelist->item(0);
+                        if (!is_null($node)) {
+
+                            $xpath = new \DOMXpath($doc);
+                            $nodelist = $xpath->query('//td[@class="td-valor"]');
+
+                            if (!is_null($nodelist)) {
+                                if ($nodelist->count() > 0) {
+                                    $node = $nodelist->item(2);
+                                    if (!is_null($node)) {
+
+                                        $confirmed = (int)$node->nodeValue;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                $message = 'Total de participantes (confirmados): <strong>' . $confirmed . '</strong>';
+
+                return $this->sendMessage($message);
+            }
+        }
+
+//        // Else
+//        $talks = Talk::join('speaker_talk', 'speaker_talk.talk_id', '=', 'talk.id')
+//            ->join('person', 'person.id', '=', 'speaker_talk.speaker_id')
+//            ->where('talk.edition_id', 15)
+//            ->get();
+//
+//        $message = '<strong>Listagem das palestras</strong>' . chr(10) . chr(10);
+//
+//        foreach ($talks as $talk) {
+//            $message .= '<strong>' . $talk->id . '. ' . $talk->title . '</strong> - <em>' . $talk->name . '</em>' . chr(10);
+//        }
+//
+//        return $this->sendMessage($message);
     }
 
     public function server()
