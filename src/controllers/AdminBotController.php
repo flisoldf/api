@@ -160,8 +160,9 @@ class AdminBotController extends BotController
 
         $message = '<strong>Listagem das palestras</strong>' . chr(10) . chr(10);
 
+        $i = 0;
         foreach ($talks as $talk) {
-            $message .= '<strong>' . $talk->id . '. ' . $talk->title . '</strong> - <em>' . $talk->name . '</em>' . chr(10);
+            $message .= '<strong>' . (++$i) . '. ' . $talk->title . '</strong> - <em>' . $talk->name . '</em>' . chr(10);
         }
 
         return $this->sendMessage($message);
