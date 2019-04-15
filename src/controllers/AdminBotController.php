@@ -32,86 +32,91 @@ class AdminBotController extends BotController
     public function __invoke(Request $request, Response $response, $args = [])
     {
         $body = $request->getParsedBody();
-        $this->init(
-            $this->container->get('settings')['telegram']['FlisolDFAdministracaoBot']['token'],
-            $body['message']['chat']['id']
-        );
-        $message = $body['message']['text'];
 
-        // Available bot commands
-        $commands = [
-            // Start of bot
-            'start',
+        if (array_key_exists('message', $body)) {
+            $this->init(
+                $this->container->get('settings')['telegram']['FlisolDFAdministracaoBot']['token'],
+                $body['message']['chat']['id']
+            );
+            $message = $body['message']['text'];
 
-            // General Commands
-            'help',
+            // Available bot commands
+            $commands = [
+                // Start of bot
+                'start',
 
-            // Server Commands
-            'server',
+                // General Commands
+                'help',
 
-            //Alias for /server uptime
-            'uptime',
-
-            // Alias for /server uname
-            'uname',
-
-            // Alias for /server who
-            'who',
-
-            // Alias for /server disk
-            'disk',
-
-            'talks',
-
-            'participants',
-        ];
-
-        $arguments = [
-            // Server
-            'server' => [
-                'uptime',
-                'uname',
-                'who',
-                'disk',
-            ],
-            'help' => [
+                // Server Commands
                 'server',
-            ],
-            'talks' => [
+
+                //Alias for /server uptime
+                'uptime',
+
+                // Alias for /server uname
+                'uname',
+
+                // Alias for /server who
+                'who',
+
+                // Alias for /server disk
+                'disk',
+
+                'talks',
+
+                'participants',
+            ];
+
+            $arguments = [
+                // Server
+                'server' => [
+                    'uptime',
+                    'uname',
+                    'who',
+                    'disk',
+                ],
+                'help' => [
+                    'server',
+                ],
+                'talks' => [
 //                'total',
-            ],
-            'participants' => [
+                ],
+                'participants' => [
 //                'total',
-            ],
-        ];
+                ],
+            ];
 
-        // Aliases for commands
-        $alias = [
-            'uptime' => 'server',
-            'uname' => 'server',
-            'who' => 'server',
-            'disk' => 'server',
-        ];
+            // Aliases for commands
+            $alias = [
+                'uptime' => 'server',
+                'uname' => 'server',
+                'who' => 'server',
+                'disk' => 'server',
+            ];
 
-        $args = explode(' ', trim($message));
+            $args = explode(' ', trim($message));
 
-        $command = ltrim(array_shift($args), '/');
-        $method = '';
+            $command = ltrim(array_shift($args), '/');
+            $method = '';
 
-        if (isset($args[0]) && in_array($args[0], $arguments[$command])) {
-            $method = array_shift($args);
-        } elseif (in_array($command, array_keys($alias))) {
-            $method = $command;
-            $command = $alias[$command];
-        }
+            if (isset($args[0]) && in_array($args[0], $arguments[$command])) {
+                $method = array_shift($args);
+            } elseif (in_array($command, array_keys($alias))) {
+                $method = $command;
+                $command = $alias[$command];
+            }
 
-        if (!in_array($command, $commands)) {
-            $this->unknown();
-        } elseif (isset($arguments[$command]) && in_array($method, $arguments[$command])) {
-            $this->{$method}($args);
-            die();
-        } else if (in_array($command, $commands)) {
-            $this->{$command}($args);
+            if (!in_array($command, $commands)) {
+                $this->unknown();
+            } elseif (isset($arguments[$command]) && in_array($method, $arguments[$command])) {
+                $this->{$method}($args);
+                die();
+            } else if (in_array($command, $commands)) {
+                $this->{$command}($args);
+            } else {
+                $this->unknown();
+            }
         } else {
             $this->unknown();
         }
@@ -261,8 +266,13 @@ class AdminBotController extends BotController
                 // Execute the GET request and print out the result.
                 $html = curl_exec($curl);
 
+                // DONE: Fix E_WARNING on load html
+                $previous_value = libxml_use_internal_errors(true);
                 $doc = new \DOMDocument();
+                $doc->strictErrorChecking = false;
                 $doc->loadHTML($html);
+                libxml_clear_errors();
+                libxml_use_internal_errors($previous_value);
 
                 $xpath = new \DOMXpath($doc);
                 $nodelist = $xpath->query('//div[@class="basicas"]');
