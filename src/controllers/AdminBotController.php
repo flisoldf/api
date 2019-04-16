@@ -9,6 +9,7 @@
 namespace Controllers;
 
 use Interop\Container\ContainerInterface;
+use Models\Collaborator;
 use Models\Talk;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -66,6 +67,8 @@ class AdminBotController extends BotController
                 'talks',
 
                 'participants',
+
+                'collaborators',
             ];
 
             $arguments = [
@@ -83,6 +86,9 @@ class AdminBotController extends BotController
 //                'total',
                 ],
                 'participants' => [
+//                'total',
+                ],
+                'collaborators' => [
 //                'total',
                 ],
             ];
@@ -136,7 +142,8 @@ class AdminBotController extends BotController
         $message .= '<strong>/help server</strong>' . chr(10) . '  - List the server related commands' . chr(10) . chr(10);
         $message .= '<strong>/talks</strong>' . chr(10) . '  - Lista as palestras' . chr(10) . chr(10);
         $message .= '<strong>/talks total</strong>' . chr(10) . '  - Exibe o total de palestras' . chr(10) . chr(10);
-        $message .= '<strong>/participants total</strong>' . chr(10) . '  - Exibe o total de participantes (confirmados)';
+        $message .= '<strong>/participants total</strong>' . chr(10) . '  - Exibe o total de participantes (confirmados)' . chr(10) . chr(10);
+        $message .= '<strong>/collaborators total</strong>' . chr(10) . '  - Exibe o total de colaboradores';
 
         return $this->sendMessage($message);
     }
@@ -314,6 +321,38 @@ class AdminBotController extends BotController
 //
 //        foreach ($talks as $talk) {
 //            $message .= '<strong>' . $talk->id . '. ' . $talk->title . '</strong> - <em>' . $talk->name . '</em>' . chr(10);
+//        }
+//
+//        return $this->sendMessage($message);
+    }
+
+    public function collaborators($args)
+    {
+        // Create connection. Necessary to stablish a connection.
+        $db = $this->container->get('db');
+
+        if (array_key_exists(0, $args)) {
+            if ($args[0] === 'total') {
+                $collaborators = Collaborator::where('edition_id', 15)
+                    ->get();
+
+                $message = 'Total de colaboradores: <strong>' . count($collaborators) . '</strong>';
+
+                return $this->sendMessage($message);
+            }
+        }
+
+//        // Else
+//        $talks = Talk::join('speaker_talk', 'speaker_talk.talk_id', '=', 'talk.id')
+//            ->join('person', 'person.id', '=', 'speaker_talk.speaker_id')
+//            ->where('talk.edition_id', 15)
+//            ->get();
+//
+//        $message = '<strong>Listagem das palestras</strong>' . chr(10) . chr(10);
+//
+//        $i = 0;
+//        foreach ($talks as $talk) {
+//            $message .= '<strong>' . (++$i) . '. ' . $talk->title . '</strong> - <em>' . $talk->name . '</em>' . chr(10);
 //        }
 //
 //        return $this->sendMessage($message);
