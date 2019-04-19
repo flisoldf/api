@@ -175,6 +175,12 @@ class AdminBotController extends BotController
         $i = 0;
         foreach ($talks as $talk) {
             $message .= '<strong>' . (++$i) . '. ' . $talk->title . '</strong> - <em>' . $talk->name . '</em>' . chr(10);
+
+            // Tentativa de enviar as informações em várias requisções (por causa do tamanho total)
+            if (($i % 10) === 0) {
+                $this->sendMessage($message);
+                $message = '';
+            }
         }
 
         return $this->sendMessage($message);
