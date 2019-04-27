@@ -3,6 +3,8 @@
 use Controllers\AdminBotController;
 use Controllers\CollaboratorsPostController;
 use Controllers\TalksPostController;
+use Controllers\ParticipantsAuthController;
+use Controllers\ParticipantsPresenceConfirmationController;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -29,3 +31,7 @@ $app->post('/community', function (Request $request, Response $response, array $
 });
 
 $app->post('/adminbot', AdminBotController::class);
+
+$app->post('/participants/auth', ParticipantsAuthController::class);
+
+$app->post('/participants/presence/confirmation', ParticipantsPresenceConfirmationController::class);

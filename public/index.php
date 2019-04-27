@@ -14,6 +14,9 @@ if (PHP_SAPI == 'cli-server') {
 
 require __DIR__ . '/../vendor/autoload.php';
 
+header('Access-Control-Allow-Headers: "Origin, X-Requested-With, Content-Type, Accept"');
+//header("Access-Control-Allow-Origin: *", false);
+
 session_start();
 
 // Instantiate the app

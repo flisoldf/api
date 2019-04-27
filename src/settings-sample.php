@@ -38,6 +38,7 @@ return [
             'talk' => __DIR__ . '/../../api-data/uploads/talk',
             'person' => __DIR__ . '/../../api-data/uploads/person',
             'community' => __DIR__ . '/../../api-data/uploads/community',
+            'participant' => __DIR__ . '/../../api-data/uploads/participant',
         ],
 
         'db' => [
