@@ -53,6 +53,8 @@ class TalksPostController extends UploaderController
         }
 
         $uploadedFiles = $request->getUploadedFiles();
+        
+        // TODO: Permitir múltiplos palestrantes e múltiplas palestras
 
         if ((!array_key_exists('pl-nome', $body)) || (empty($body['pl-nome']))) {
             return $response->withJson([
@@ -166,8 +168,8 @@ class TalksPostController extends UploaderController
             ], 400);
         }
 
-        // TODO: Turn it dynamic from table
-        $talk->edition_id = 15;
+        // DONE: Turn it dynamic from table
+        $talk->edition_id = $this->container->get('settings')['edition'];
         $talk->save();
         $speakerTalk->talk_id = $talk->id;
 

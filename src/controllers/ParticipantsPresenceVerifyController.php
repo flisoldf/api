@@ -55,7 +55,7 @@ class ParticipantsPresenceVerifyController
 
         $dateLimit = new \DateTime('2019-04-27 16:00:00', new \DateTimeZone('America/Sao_Paulo'));
 
-        //if ($dateNow > $dateLimit) {
+        if ($dateNow > $dateLimit) {
             $participant = $db::table('participant')->where([
                 ['email', '=', $email],
                 ['federal_code', '=', $federalCode],
@@ -79,10 +79,11 @@ class ParticipantsPresenceVerifyController
                     'confirmed' => false
                 ], 200);
             }
-//        } else {
-//            return $response->withJson([
-//                'message' => 'Uh Oh. Ainda não são 16:00h.'
-//            ], 400);
+        } else {
+            return $response->withJson([
+                'message' => 'Uh Oh. Ainda não são 16:00h.'
+            ], 400);
+        }
     }
 
 }

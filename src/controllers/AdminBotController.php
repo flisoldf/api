@@ -155,7 +155,7 @@ class AdminBotController extends BotController
 
         if (array_key_exists(0, $args)) {
             if ($args[0] === 'total') {
-                $talks = Talk::where('edition_id', 15)
+                $talks = Talk::where('edition_id', $this->container->get('settings')['edition'])
                     ->get();
 
                 $message = 'Total de palestras: <strong>' . count($talks) . '</strong>';
@@ -167,7 +167,7 @@ class AdminBotController extends BotController
         // Else
         $talks = Talk::join('speaker_talk', 'speaker_talk.talk_id', '=', 'talk.id')
             ->join('person', 'person.id', '=', 'speaker_talk.speaker_id')
-            ->where('talk.edition_id', 15)
+            ->where('talk.edition_id', $this->container->get('settings')['edition'])
             ->get();
 
         $message = '<strong>Listagem das palestras</strong>' . chr(10) . chr(10);
@@ -302,7 +302,6 @@ class AdminBotController extends BotController
                                 if ($nodelist->count() > 0) {
                                     $node = $nodelist->item(2);
                                     if (!is_null($node)) {
-
                                         $confirmed = (int)$node->nodeValue;
                                     }
                                 }
@@ -339,7 +338,7 @@ class AdminBotController extends BotController
 
         if (array_key_exists(0, $args)) {
             if ($args[0] === 'total') {
-                $collaborators = Collaborator::where('edition_id', 15)
+                $collaborators = Collaborator::where('edition_id', $this->container->get('settings')['edition'])
                     ->get();
 
                 $message = 'Total de colaboradores: <strong>' . count($collaborators) . '</strong>';

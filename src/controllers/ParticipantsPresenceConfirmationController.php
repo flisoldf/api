@@ -82,7 +82,7 @@ class ParticipantsPresenceConfirmationController
             return $response->withJson([
                 'message' => 'O código de confirmação não confere.'
             ], 400);
-        } else {//if ($dateNow > $dateLimit) {
+        } elseif ($dateNow > $dateLimit) {
             $participant = $db::table('participant')->where([
                 ['email', '=', $email],
                 ['federal_code', '=', $federalCode],
@@ -112,7 +112,7 @@ class ParticipantsPresenceConfirmationController
 //                $angle = 90;
 //                $rotate = imagerotate($source, $angle, 0); // if want to rotate the image
 //                $imageSave = imagejpeg($rotate, $imageName,100);
-                imagejpeg($source, $filename,100);
+                imagejpeg($source, $filename, 100);
                 imagedestroy($source);
 
                 return $response->withJson([
@@ -123,10 +123,10 @@ class ParticipantsPresenceConfirmationController
                     'message' => 'Sua presença já está confirmada. Boa sorte!'
                 ], 200);
             }
-//        } else {
-//            return $response->withJson([
-//                'message' => 'Uh Oh. Ainda não são 16:00h.'
-//            ], 400);
+        } else {
+            return $response->withJson([
+                'message' => 'Uh Oh. Ainda não são 16:00h.'
+            ], 400);
         }
     }
 
