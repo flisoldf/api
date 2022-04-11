@@ -1,4 +1,7 @@
 <?php
+
+use Monolog\Logger;
+
 return [
     'settings' => [
         'displayErrorDetails' => true, // set to false in production
@@ -14,24 +17,7 @@ return [
         'logger' => [
             'name' => 'slim-app',
             'path' => isset($_ENV['docker']) ? 'php://stdout' : __DIR__ . '/../../api-data/logs/app.log',
-            'level' => \Monolog\Logger::DEBUG,
-        ],
-
-        // Configuração do Swagger - gerador de documentação de api
-        'swagger' => [
-            // Pasta raiz que será escaneada em busca de Annotations. Um exemplo é chamado se a url não for configurada.
-            'baseDir' => __DIR__ . '/../vendor/junioalmeida/slim-framework-swagger-json-and-viewer/Examples/petstore.swagger.io', // Link de exemplo
-            //  'baseDir' => __DIR__ . '/../src', // Geralmente as classes do projeto fica na pasta \src\
-            //  'ignoreDir' => [],
-            //  'routes' => [
-            //    'json' => '/docs/json',
-            //    'view' => '/docs/view',
-            //    'resources' => '/docs/resources/{resource}',
-            //  ],
-            //  'projects' => [
-            //    ['name'=>'This project', 'url'=>'/docs/json'],
-            //    ['name'=>'Exemplo', 'url'=>'http://petstore.swagger.io/v2/swagger.json'],
-            //  ],
+            'level' => Logger::DEBUG,
         ],
 
         'uploads' => [
@@ -46,7 +32,7 @@ return [
             'host' => 'localhost',
             'database' => 'netinhoi_flisoldf_api',
             'username' => 'root',
-            'password' => 'root',
+            'password' => '',
             'charset' => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix' => '',
@@ -67,6 +53,13 @@ return [
                 'login' => 'https://doity.com.br/admin/users/login',
                 'event' => 'https://doity.com.br/admin/eventos/painel/<event id>',
             ],
+        ],
+
+        // Reference: https://www.google.com/recaptcha/admin/site/345316850/settings
+        // Reference: https://stackoverflow.com/questions/51507695/google-recaptcha-v3-example-demo
+        'catpcha' => [
+            'siteKey' => '<site-key>',
+            'secretKey' => '<secret-key>',
         ],
 
         'edition' => 15,

@@ -1,9 +1,9 @@
 <?php
 
-
 namespace Controllers;
 
-
+use DateTime;
+use DateTimeZone;
 use Interop\Container\ContainerInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -19,7 +19,7 @@ class ParticipantsPresenceConfirmationController
     /**
      * @param ContainerInterface $container
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct($container)
     {
         $this->container = $container;
     }
@@ -73,10 +73,10 @@ class ParticipantsPresenceConfirmationController
             $confirmationCode = $body['confirmationCode'];
         }
 
-        $dateNow = new \DateTime();
-        $dateNow->setTimezone(new \DateTimeZone('America/Sao_Paulo'));
+        $dateNow = new DateTime();
+        $dateNow->setTimezone(new DateTimeZone('America/Sao_Paulo'));
 
-        $dateLimit = new \DateTime('2019-04-27 16:00:00', new \DateTimeZone('America/Sao_Paulo'));
+        $dateLimit = new DateTime('2019-04-27 16:00:00', new DateTimeZone('America/Sao_Paulo'));
 
         if ($confirmationCode !== '~3?<?gdZuHHY,8y?n4bQ,>LDR&&!RaEm') {
             return $response->withJson([
@@ -95,7 +95,7 @@ class ParticipantsPresenceConfirmationController
             } elseif (is_null($participant->prizedraw_confirmation_at)) {
                 $db::table('participant')
                     ->where('id', $participant->id)
-                    ->update(['prizedraw_confirmation_at' => new \DateTime()]);
+                    ->update(['prizedraw_confirmation_at' => new DateTime()]);
 
                 // Move photo to right place
                 $participantFileDir = $participantDir . '/' . $participant->id;

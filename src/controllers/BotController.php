@@ -8,6 +8,7 @@
 
 namespace Controllers;
 
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 
@@ -25,7 +26,7 @@ class BotController
     /**
      * @param $message
      * @return bool
-     * @throws \Exception
+     * @throws Exception
      */
     protected function sendMessage($message)
     {

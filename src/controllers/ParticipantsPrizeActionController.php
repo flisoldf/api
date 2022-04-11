@@ -1,9 +1,8 @@
 <?php
 
-
 namespace Controllers;
 
-
+use DateTime;
 use Interop\Container\ContainerInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -19,7 +18,7 @@ class ParticipantsPrizeActionController
     /**
      * @param ContainerInterface $container
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct($container)
     {
         $this->container = $container;
     }
@@ -68,7 +67,7 @@ class ParticipantsPrizeActionController
             $db::table('participant')
                 ->where('id', $id)
                 ->update([
-                    'prizedraw_winner' => new \DateTime(),
+                    'prizedraw_winner' => new DateTime(),
                     'prizedraw_description' => $prize,
                     'prizedraw_order' => $order
                 ]);

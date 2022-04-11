@@ -27,7 +27,7 @@ class CollaboratorsPostController
     /**
      * @param ContainerInterface $container
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct($container)
     {
         $this->container = $container;
     }
@@ -36,7 +36,40 @@ class CollaboratorsPostController
     {
         $body = $request->getParsedBody();
 
-        // Create connection. Necessary to stablish a connection.
+        $settings = $this->container->get('settings');
+
+        /*
+        // Captcha validation
+        if ((!array_key_exists('cpc-g-recaptcha-response', $body)) || (empty($body['cpc-g-recaptcha-response']))) {
+            return $response->withJson([
+                'message' => 'O campo Captcha é obrigatório.'
+            ], 400);
+        }
+
+        $captcha = $body['cpc-g-recaptcha-response'];
+        $secret = $settings['catpcha']['secretKey'];
+        $url = 'https://www.google.com/recaptcha/api/siteverify?secret=' . $secret . '&response=' . $captcha . '&remoteip=' . $_SERVER['REMOTE_ADDR'];
+        $captchaResponse = file_get_contents($url);
+        // Use json_decode to extract json response
+        $captchaResponse = json_decode($captchaResponse);
+
+        // Ex: {"success": false, "error-codes": ["timeout-or-duplicate"]}
+        if ($captchaResponse->success === false) {
+            return $response->withJson([
+                'message' => 'O valor do campo Captcha não é válido.'
+            ], 400);
+        }
+
+        //... The Captcha is invalid you can't continue with the rest of your code
+        //... Add code to filter access using $response . score
+        if (($captchaResponse->success == true) && ($captchaResponse->score <= 0.5)) {
+            return $response->withJson([
+                'message' => 'O valor do campo Captcha não possui um score alto.'
+            ], 400);
+        }
+        */
+
+        // Create connection. Necessary to establish a connection.
         $db = $this->container->get('db');
 
         $disponibilidades = [];
@@ -69,13 +102,14 @@ class CollaboratorsPostController
             $person->phone = $body['cpc-telefone'];
         }
 
-        if ((!array_key_exists('cpc-usa-software-livre', $body)) || (empty($body['cpc-usa-software-livre']))) {
-            return $response->withJson([
-                'message' => 'O campo Usa Software Livre? é obrigatório.'
-            ], 400);
-        } else {
-            $person->use_free = $body['cpc-usa-software-livre'];
-        }
+//        if ((!array_key_exists('cpc-usa-software-livre', $body)) || (($body['cpc-usa-software-livre'] !== 0) && ($body['cpc-usa-software-livre'] !== 1))) {
+//            return $response->withJson([
+//                'message' => 'O campo Usa Software Livre? é obrigatório.'
+//            ], 400);
+//        } else {
+//            $person->use_free = $body['cpc-usa-software-livre'];
+//        }
+        $person->use_free = $body['cpc-usa-software-livre'];
 
         if ((!array_key_exists('cpc-distribuicao', $body)) || (empty($body['cpc-distribuicao']))) {
             return $response->withJson([
@@ -91,14 +125,6 @@ class CollaboratorsPostController
             ], 400);
         } else {
             $person->student_info_id = $body['cpc-estudante'];
-        }
-
-        if ((!array_key_exists('cpc-local-estudo-trabalho', $body)) || (empty($body['cpc-local-estudo-trabalho']))) {
-            return $response->withJson([
-                'message' => 'O campo Onde você estuda ou trabalha? é obrigatório.'
-            ], 400);
-        } else {
-            $person->student_place = $body['cpc-local-estudo-trabalho'];
         }
 
         if ((!array_key_exists('cpc-local-estudo-trabalho', $body)) || (empty($body['cpc-local-estudo-trabalho']))) {
@@ -139,7 +165,8 @@ class CollaboratorsPostController
 
         $person->save();
 
-        $collaborator->edition_id = 15;
+        // DONE: Turn it dynamic from table edition
+        $collaborator->edition_id = $settings['edition'];
         $collaborator->person_id = $person->id;
         $collaborator->save();
 

@@ -1,7 +1,7 @@
 <?php
 // DIC configuration
 
-//use Controllers\TalkPostController;
+use Illuminate\Database\Capsule\Manager;
 
 $container = $app->getContainer();
 
@@ -20,16 +20,8 @@ $container['logger'] = function ($c) {
     return $logger;
 };
 
-// Configurações da integração Slim+Swagger-PHP e do Swagger-PHP
-// $app é a variavel que contem a instancia da aplicação
-$container[\JunioDeAlmeida\Slim\SlimSwaggerRouteJav::class] = function ($c) use ($app) {
-    return new \JunioDeAlmeida\Slim\SlimSwaggerRouteJav($app);
-};
-// Seteando as rotas /docs/view e /docs/json
-$container[\JunioDeAlmeida\Slim\SlimSwaggerRouteJav::class]->setRouters();
-
 $container['db'] = function ($container) {
-    $capsule = new \Illuminate\Database\Capsule\Manager;
+    $capsule = new Manager;
     $capsule->addConnection($container['settings']['db']);
 
     $capsule->setAsGlobal();
@@ -38,10 +30,10 @@ $container['db'] = function ($container) {
     return $capsule;
 };
 
-$container[Controllers\TalksPostController::class] = function ($c)  {
+$container[Controllers\TalksPostController::class] = function ($c) {
     return new Controllers\TalksPostController($c);
 };
 
-$container[Controllers\CollaboratorsPostController::class] = function ($c)  {
+$container[Controllers\CollaboratorsPostController::class] = function ($c) {
     return new Controllers\CollaboratorsPostController($c);
 };

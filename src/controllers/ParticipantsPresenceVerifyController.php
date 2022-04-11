@@ -1,9 +1,9 @@
 <?php
 
-
 namespace Controllers;
 
-
+use DateTime;
+use DateTimeZone;
 use Interop\Container\ContainerInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -19,7 +19,7 @@ class ParticipantsPresenceVerifyController
     /**
      * @param ContainerInterface $container
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct($container)
     {
         $this->container = $container;
     }
@@ -50,10 +50,10 @@ class ParticipantsPresenceVerifyController
             $federalCode = $body['federalCode'];
         }
 
-        $dateNow = new \DateTime();
-        $dateNow->setTimezone(new \DateTimeZone('America/Sao_Paulo'));
+        $dateNow = new DateTime();
+        $dateNow->setTimezone(new DateTimeZone('America/Sao_Paulo'));
 
-        $dateLimit = new \DateTime('2019-04-27 16:00:00', new \DateTimeZone('America/Sao_Paulo'));
+        $dateLimit = new DateTime('2019-04-27 16:00:00', new DateTimeZone('America/Sao_Paulo'));
 
         if ($dateNow > $dateLimit) {
             $participant = $db::table('participant')->where([

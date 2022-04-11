@@ -11,7 +11,7 @@ ini_set('html_errors', 0);
 error_reporting(-1);
 
 if (!function_exists('ShutdownHandler')) {
-    
+
     /**
      * Shutdown handler.
      *
@@ -43,7 +43,7 @@ if (!function_exists('ErrorHandler')) {
      */
     function ErrorHandler($type, $message, $file, $line)
     {
-        $_ERRORS = Array(
+        $_ERRORS = array(
             0x0001 => 'E_ERROR',
             0x0002 => 'E_WARNING',
             0x0004 => 'E_PARSE',

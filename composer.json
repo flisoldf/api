@@ -17,12 +17,12 @@
     }
   ],
   "require": {
-    "php": ">=5.5.0",
+    "php": "^7.4 || ^8.0",
+    "ext-json": "*",
     "slim/slim": "^3.1",
     "slim/php-view": "^2.0",
     "monolog/monolog": "^1.17",
-    "junioalmeida/slim-framework-swagger-json-and-viewer": "^1.0",
-    "illuminate/database": "~5.1",
+    "illuminate/database": "^9.5",
     "guzzlehttp/guzzle": "^6.3"
   },
   "require-dev": {

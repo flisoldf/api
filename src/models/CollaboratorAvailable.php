@@ -8,9 +8,10 @@
 
 namespace Models;
 
-use \Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 
-class CollaboratorAvailable extends Model {
+class CollaboratorAvailable extends Model
+{
 
     protected $table = 'collaborator_available';
 

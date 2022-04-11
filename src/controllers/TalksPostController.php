@@ -8,6 +8,7 @@
 
 namespace Controllers;
 
+use Exception;
 use Interop\Container\ContainerInterface;
 use Models\Person;
 use Models\SpeakerTalk;
@@ -26,7 +27,7 @@ class TalksPostController extends UploaderController
     /**
      * @param ContainerInterface $container
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct($container)
     {
         $this->container = $container;
     }
@@ -35,25 +36,58 @@ class TalksPostController extends UploaderController
     {
         $body = $request->getParsedBody();
 
-        // Create connection. Necessary to stablish a connection.
+        $settings = $this->container->get('settings');
+
+        /*
+        // Captcha validation
+        if ((!array_key_exists('pl-g-recaptcha-response', $body)) || (empty($body['pl-g-recaptcha-response']))) {
+            return $response->withJson([
+                'message' => 'O campo Captcha é obrigatório.'
+            ], 400);
+        }
+
+        $captcha = $body['pl-g-recaptcha-response'];
+        $secret = $settings['catpcha']['secretKey'];
+        $url = 'https://www.google.com/recaptcha/api/siteverify?secret=' . $secret . '&response=' . $captcha . '&remoteip=' . $_SERVER['REMOTE_ADDR'];
+        $captchaResponse = file_get_contents($url);
+        // Use json_decode to extract json response
+        $captchaResponse = json_decode($captchaResponse);
+
+        // Ex: {"success": false, "error-codes": ["timeout-or-duplicate"]}
+        if ($captchaResponse->success === false) {
+            return $response->withJson([
+                'message' => 'O valor do campo Captcha não é válido.'
+            ], 400);
+        }
+
+        //... The Captcha is invalid you can't continue with the rest of your code
+        //... Add code to filter access using $response . score
+        if (($captchaResponse->success == true) && ($captchaResponse->score <= 0.5)) {
+            return $response->withJson([
+                'message' => 'O valor do campo Captcha não possui um score alto.'
+            ], 400);
+        }
+        */
+
+        // Create connection. Necessary to establish a connection.
         $db = $this->container->get('db');
 
         $person = new Person();
         $talk = new Talk();
         $speakerTalk = new SpeakerTalk();
 
-        $personDir = $this->container->get('settings')['uploads']['person'];
+        $personDir = $settings['uploads']['person'];
         if (!file_exists($personDir)) {
             mkdir($personDir, 0755, true);
         }
 
-        $talkDir = $this->container->get('settings')['uploads']['talk'];
+        $talkDir = $settings['uploads']['talk'];
         if (!file_exists($talkDir)) {
             mkdir($talkDir, 0755, true);
         }
 
         $uploadedFiles = $request->getUploadedFiles();
-        
+
         // TODO: Permitir múltiplos palestrantes e múltiplas palestras
 
         if ((!array_key_exists('pl-nome', $body)) || (empty($body['pl-nome']))) {
@@ -88,7 +122,7 @@ class TalksPostController extends UploaderController
             // Verify is file is sent
             try {
                 $this->fileIsSent($uploadedFiles['pl-foto']);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 return $response->withJson([
                     'message' => 'O campo Foto é obrigatório.'
                 ], 400);
@@ -157,19 +191,21 @@ class TalksPostController extends UploaderController
         try {
             // Move photo to right place
             $personFileDir = $personDir . '/' . $person->id;
+
             if (!file_exists($personFileDir)) {
                 mkdir($personFileDir, 0755, true);
             }
+
             $person->photo = $this->moveUploadedFile($personFileDir, $uploadedFiles['pl-foto']);
             $person->save();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $response->withJson([
                 'message' => 'O campo Foto é obrigatório.'
             ], 400);
         }
 
-        // DONE: Turn it dynamic from table
-        $talk->edition_id = $this->container->get('settings')['edition'];
+        // DONE: Turn it dynamic from table edition
+        $talk->edition_id = $settings['edition'];
         $talk->save();
         $speakerTalk->talk_id = $talk->id;
 
@@ -180,15 +216,17 @@ class TalksPostController extends UploaderController
                 // Verify is file is sent
                 if ($this->fileIsSent($uploadedFiles['pl-slide'])) {
                     $talkFileDir = $talkDir . '/' . $talk->id;
+
                     if (!file_exists($talkFileDir)) {
                         mkdir($talkFileDir, 0755, true);
                     }
+
                     $talk->slide_file = $this->moveUploadedFile($talkFileDir, $uploadedFiles['pl-slide']);
                     $talk->save();
                 }
             }
-        } catch (\Exception $e) {
-            // do nothing.
+        } catch (Exception $e) {
+            // Do nothing.
         }
 
         $speakerTalk->save();

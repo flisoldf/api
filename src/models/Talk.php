@@ -10,9 +10,9 @@ namespace Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Collaborator extends Model
+class Talk extends Model
 {
 
-    protected $table = 'collaborator';
+    protected $table = 'talk';
 
 }

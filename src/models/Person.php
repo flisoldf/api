@@ -8,10 +8,11 @@
 
 namespace Models;
 
-use \Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 
-class Talk extends Model {
+class Person extends Model
+{
 
-    protected $table = 'talk';
+    protected $table = 'person';
 
 }

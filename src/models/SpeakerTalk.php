@@ -8,9 +8,10 @@
 
 namespace Models;
 
-use \Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 
-class SpeakerTalk extends Model {
+class SpeakerTalk extends Model
+{
 
     protected $table = 'speaker_talk';
 
