@@ -47,5 +47,23 @@ RUN curl -o /tmp/composer-setup.php https://getcomposer.org/installer \
   && php /tmp/composer-setup.php --no-ansi --install-dir=/usr/local/bin --filename=composer \
   && rm -rf /tmp/composer-setup.php
 
+## XDebug
+## This example is extremely barebones and specific to Alpine linux, however in most containers at/below
+## php 7.4, you can just run pecl + docker-php-ext-enable (see below) after you've ensured that you have
+## also installed phpize (necessary for building PHP extensions).
+#RUN apk --update add \
+#    g++ && \
+#    pecl install xdebug-2.9.2 && \
+#    docker-php-ext-enable xdebug && \
+#    # Clean up...
+#    apk del g++
+#
+## Copy over our custom xdebug INI configuration which will coexist with the automatically generated
+## $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini created by the "docker-php-ext-enable xdebug" command above.
+#COPY ./conf.d/xdebug.ini $PHP_INI_DIR/conf.d
+#
+## Enable show all errors
+#COPY ./conf.d/error_reporting.ini $PHP_INI_DIR/conf.d
+
 # Set up the working directory
 WORKDIR /var/www/app

@@ -2,6 +2,8 @@
 
 use Monolog\Logger;
 
+$docker = (getenv('docker') !== null);
+
 return [
     'settings' => [
         'displayErrorDetails' => true, // set to false in production
@@ -16,7 +18,7 @@ return [
         // Monolog settings
         'logger' => [
             'name' => 'slim-app',
-            'path' => (getenv('docker') !== null) ? 'php://stdout' : __DIR__ . '/../../api-data/logs/app.log',
+            'path' => $docker ? 'php://stdout' : __DIR__ . '/../../api-data/logs/app.log',
             'level' => Logger::DEBUG,
         ],
 
@@ -29,10 +31,10 @@ return [
 
         'db' => [
             'driver' => 'mysql',
-            'host' => 'localhost',
-            'database' => 'netinhoi_flisoldf_api',
-            'username' => 'root',
-            'password' => '',
+            'host' => $docker ? 'mysql' : 'localhost',
+            'database' => $docker ? 'flisoldf_api' : '',
+            'username' => $docker ? 'root' : '',
+            'password' => $docker ? 'root' : '',
             'charset' => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix' => '',
@@ -62,7 +64,7 @@ return [
             'secretKey' => '<secret-key>',
         ],
 
-        'edition' => 15,
+        'edition' => 1
     ],
 
 ];

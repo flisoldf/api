@@ -36,7 +36,7 @@ Run these commands in the directory where you download the code.
 
 1. Start the docker-compose services (PHP, Nginx) in the background (detached):
   ```
-$ docker-compose up -d
+$ docker-compose up -d -p flisoldf
   ```
 
 2. Run the Composer installer in the PHP container to install the PHP dependencies:

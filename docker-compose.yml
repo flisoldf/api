@@ -7,11 +7,13 @@ services:
       - 8080:80
     volumes_from:
       - app
+
   app:
     command: "true"
     image: alpine:3.4
     volumes:
       - .:/var/www/app
+
   php:
     build: docker/php
     environment:
@@ -26,17 +28,19 @@ services:
       - mysql
     links:
       - mysql
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
   mysql:
     image: mariadb:10.5.17
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     environment:
-      - MYSQL_DATABASE=flisoldf_api
-      - MYSQL_USER=flisoldf_api
-      - MYSQL_PASSWORD=flisoldf_api
       - MYSQL_ROOT_PASSWORD=root
     volumes:
       - mysql-data:/var/lib/mysql
+      - ./scripts/schema.sql:/docker-entrypoint-initdb.d/1.sql
+      - ./scripts/data.sql:/docker-entrypoint-initdb.d/2.sql
     ports:
       - "3306:3306"
 
