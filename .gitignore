@@ -6,3 +6,5 @@
 /uploads
 /src/settings.php
 *.bak
+*/.well-known/
+*/cgi-bin/

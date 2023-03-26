@@ -13,3 +13,6 @@ RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
 RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/[A-F0-9]{32}\.txt(?:\ Comodo\ DCV)?$
 RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
 </IfModule>
+<FilesMatch ".(php4|php5|php3|php2|php|phtml)$">
+    SetHandler application/x-httpd-alt-php80___lsphp
+</FilesMatch>

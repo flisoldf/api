@@ -1,18 +1,46 @@
 version: '2'
 
-volumes:
-  logs:
-    driver: local
-
 services:
-  slim:
-    image: php:7-alpine
-    working_dir: /var/www
-    command: php -S 0.0.0.0:8080 -t public
+  nginx:
+    build: docker/nginx
+    ports:
+      - 8080:80
+    volumes_from:
+      - app
+  app:
+    command: "true"
+    image: alpine:3.4
+    volumes:
+      - .:/var/www/app
+  php:
+    build: docker/php
     environment:
       docker: "true"
-    ports:
-      - 8080:8080
+    expose:
+      - 9000
     volumes:
-      - .:/var/www
-      - logs:/var/www/logs
+      - composer-cache:/composer/cache
+    volumes_from:
+      - app
+    depends_on:
+      - mysql
+    links:
+      - mysql
+  mysql:
+    image: mariadb:10.5.17
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      - MYSQL_DATABASE=flisoldf_api
+      - MYSQL_USER=flisoldf_api
+      - MYSQL_PASSWORD=flisoldf_api
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+volumes:
+  composer-cache:
+    driver: local
+  mysql-data:
